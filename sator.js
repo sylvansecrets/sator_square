@@ -1,19 +1,23 @@
 'use strict';
 
 const fs = require('fs');
+// const deepClone = require('fast-deepclone');
 var progressCount = 0;
-var input = process.argv[2]
+var input = process.argv.slice(2)[0];
 var stream = fs.createWriteStream(`${input}.txt`, {flags: 'a'});
 
-fs.readFile('wordsEnSmall', 'utf-8', function(err, contents) {
+fs.readFile('idiom_list', 'utf-8', function(err, contents) {
 	contents = contents.toUpperCase();
 	var wordList = contents.split('\n');
 
 	wordList = wordList.map(function(word){
 		return word.toUpperCase().trim();
 	})
-	
-	var a = satorSearch(wordList, null, [], input);
+	if(!isNaN(parseInt(input))) {
+		satorSearch(wordList, null, [], null, parseInt(input));
+	} else {
+		satorSearch(wordList, null, [], input);
+	}
 	stream.end();
 
 })
@@ -76,6 +80,7 @@ function satorSearch(wordList, stack=null, completed=[], word=null, wordLength=n
 
 		//poor deepcopy; replace with lo-dash if used in browser && doesn't exceed stack limit
 		var contemplateCopy = JSON.parse(JSON.stringify(contemplate));
+		// var contemplateCopy = deepClone(contemplate);
 
 		progressCount += 1;
 
